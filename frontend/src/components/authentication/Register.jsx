@@ -1,16 +1,92 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userRegister } from "../../store/actions/authAction";
+
+// import { useTheme } from "@mui/material/styles";
+// import {
+//   Box,
+//   Button,
+//   Checkbox,
+//   Divider,
+//   FormControl,
+//   FormControlLabel,
+//   FormHelperText,
+//   Grid,
+//   IconButton,
+//   InputAdornment,
+//   InputLabel,
+//   OutlinedInput,
+//   TextField,
+//   Typography,
+//   useMediaQuery,
+// } from "@mui/material";
 
 const Register = () => {
+  const dispatch = useDispatch();
+
+  const [state, setState] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    image: "",
+  });
+
+  const [loadImage, setLoadImage] = useState("");
+
+  const inputHandle = (e) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
+
+  const fileHandle = (e) => {
+    if (e.target.files.length !== 0) {
+      setState({ ...state, [e.target.name]: e.target.files[0] });
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setLoadImage(reader.result);
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  const register = (e) => {
+    const { name, surname, email, password, confirmPassword, image } = state;
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("surname", surname);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confirmPassword", confirmPassword);
+    formData.append("image", image);
+    dispatch(userRegister(formData));
+  };
+
   return (
     <div className="register">
+      {/* <Button
+        disableElevation
+        // disabled={}
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        color="secondary"
+      >
+        Sign up
+      </Button> */}
+
       <div className="card">
         <div className="card-header">
           <h3>Register</h3>
         </div>
 
         <div className="card-body">
-          <form>
+          <form onSubmit={register}>
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <input
@@ -19,6 +95,8 @@ const Register = () => {
                 className="form-control"
                 placeholder="Name"
                 id="name"
+                onChange={inputHandle}
+                value={state.name}
               />
             </div>
 
@@ -30,6 +108,8 @@ const Register = () => {
                 className="form-control"
                 placeholder="Surname"
                 id="surname"
+                onChange={inputHandle}
+                value={state.surname}
               />
             </div>
 
@@ -41,6 +121,8 @@ const Register = () => {
                 className="form-control"
                 placeholder="Email"
                 id="email"
+                onChange={inputHandle}
+                value={state.email}
               />
             </div>
 
@@ -52,6 +134,8 @@ const Register = () => {
                 className="form-control"
                 placeholder="Password"
                 id="password"
+                onChange={inputHandle}
+                value={state.placeholder}
               />
             </div>
 
@@ -63,12 +147,16 @@ const Register = () => {
                 className="form-control"
                 placeholder="Confirm Password"
                 id="confirmPassword"
+                onChange={inputHandle}
+                value={state.confirmPassword}
               />
             </div>
 
             <div className="form-group">
               <div className="file-image">
-                <div className="image"></div>
+                <div className="image">
+                  {loadImage ? <img src={loadImage} alt="profile" /> : ""}
+                </div>
                 <div className="file">
                   <label htmlFor="image">Select Image</label>
                   <input
@@ -76,6 +164,7 @@ const Register = () => {
                     name="image"
                     className="form-control"
                     id="image"
+                    onChange={fileHandle}
                   />
                 </div>
               </div>
