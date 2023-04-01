@@ -63,6 +63,7 @@ const Register = () => {
     formData.append("password", password);
     formData.append("confirmPassword", confirmPassword);
     formData.append("image", image);
+
     dispatch(userRegister(formData));
   };
 
