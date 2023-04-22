@@ -114,3 +114,80 @@ module.exports.userRegister = (req, res) => {
     }
   });
 };
+
+module.exports.userLogin = async (req, res) => {
+  console.log(req.body);
+  const error = [];
+  const { email, password } = req.body;
+  if (!email) {
+    error.push("Please provide your email");
+  }
+  if (!password) {
+    error.push("Please provide your password");
+  }
+  if (email && !validator.isEmail(email)) {
+    error.push("Please provide your valid email");
+  }
+  if (error.length > 0) {
+    res.status(400).json({
+      error: {
+        errorMessage: error,
+      },
+    });
+  } else {
+    try {
+      const checkUser = await registerModel
+        .findOne({ email: email })
+        .select("+password");
+
+      if (checkUser) {
+        const matchPassword = await bcrypt.compare(
+          password,
+          checkUser.password
+        );
+
+        if (matchPassword) {
+          const token = jwt.sign(
+            {
+              id: checkUser._id,
+              email: checkUser.email,
+              name: checkUser.name,
+              surname: checkUser.surname,
+              image: checkUser.image,
+              registerTime: checkUser.createdAt,
+            },
+            "ASHDFKLAHSD2323",
+            {
+              expiresIn: "7d",
+            }
+          );
+          const options = {
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          };
+          res.status(200).cookie("authToken", token, options).json({
+            successMessage: "Your Login Successful",
+            token,
+          });
+        } else {
+          res.status(400).json({
+            error: {
+              errorMessage: ["Your password not valid"],
+            },
+          });
+        }
+      } else {
+        res.status(400).json({
+          error: {
+            errorMessage: ["Your email not found"],
+          },
+        });
+      }
+    } catch {
+      res.status(404).json({
+        error: {
+          errorMessage: ["Internal server error"],
+        },
+      });
+    }
+  }
+};

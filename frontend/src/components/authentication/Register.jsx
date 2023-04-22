@@ -141,7 +141,7 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
-                type="text"
+                type="email"
                 name="email"
                 className="form-control"
                 placeholder="Email"
@@ -154,7 +154,7 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
-                type="text"
+                type="password"
                 name="password"
                 className="form-control"
                 placeholder="Password"
@@ -167,7 +167,7 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
-                type="text"
+                type="password"
                 name="confirmPassword"
                 className="form-control"
                 placeholder="Confirm Password"
