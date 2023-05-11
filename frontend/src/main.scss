@@ -1,3 +1,12 @@
 @import "./sass/base/reset";
-@import "./sass/utils/utils.scss";
+@import "./sass/utils/utils";
+@import "./sass/layout/grid";
+
 @import "./components/authentication/authentication";
+@import "./components/chat/chat";
+@import "./components/activeFriend/activeFriend";
+@import "./components/friends/friends";
+@import "./components/rightContainer/rightContainer";
+@import "./components/message/message";
+@import "./components/messageSend/messageSend";
+@import "./components/friendInfo/friendInfo";
