@@ -9,14 +9,24 @@ import {
   messageSend,
   getMessage,
   imageMessageSend,
+  seenMessage,
+  updateMessage,
 } from "../../store/actions/chatAction";
+import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
+import useSound from "use-sound";
+import notificationSound from "../../audio/notification.mp3";
+import sendingSound from "../../audio/sending.mp3";
 
 const Chat = () => {
+  const [notificationSPlay] = useSound(notificationSound);
+  const [sendingSPlay] = useSound(sendingSound);
+
   const scrollRef = useRef();
   const socket = useRef();
 
-  const { friends, message } = useSelector((state) => state.chat);
+  const { friends, message, mesageSendSuccess, message_get_success } =
+    useSelector((state) => state.chat);
   const { myInfo } = useSelector((state) => state.auth);
 
   const [currentfriend, setCurrentFriend] = useState("");
@@ -24,13 +34,42 @@ const Chat = () => {
 
   const [activeUser, setActiveUser] = useState([]);
   const [socketMessage, setSocketMessage] = useState("");
-
-  console.log("activeUser", activeUser);
+  const [typingMessage, setTypingMessage] = useState("");
 
   useEffect(() => {
     socket.current = io("ws://localhost:8000");
     socket.current.on("getMessage", (data) => {
       setSocketMessage(data);
+    });
+
+    socket.current.on("typingMessageGet", (data) => {
+      console.log("data", data);
+      setTypingMessage(data);
+    });
+
+    socket.current.on("msgSeenResponse", (msg) => {
+      dispatch({
+        type: "SEEN_MESSAGE",
+        payload: {
+          msgInfo: msg,
+        },
+      });
+    });
+
+    socket.current.on("msgDelivaredResponse", (msg) => {
+      dispatch({
+        type: "DELIVARED_MESSAGE",
+        payload: {
+          msgInfo: msg,
+        },
+      });
+    });
+
+    socket.current.on("seenSuccess", (data) => {
+      dispatch({
+        type: "SEEN_ALL",
+        payload: data,
+      });
     });
   }, []);
 
@@ -44,6 +83,15 @@ const Chat = () => {
           type: "SOCKET_MESSAGE",
           payload: {
             message: socketMessage,
+          },
+        });
+        dispatch(seenMessage(socketMessage));
+        socket.current.emit("messageSeen", socketMessage);
+        dispatch({
+          type: "UPDATE_FRIEND_MESSAGE",
+          payload: {
+            msgInfo: socketMessage,
+            status: "seen",
           },
         });
       }
@@ -62,19 +110,39 @@ const Chat = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (
+      socketMessage &&
+      socketMessage.senderId !== currentfriend._id &&
+      socketMessage.receiverId === myInfo.id
+    ) {
+      notificationSPlay();
+      toast.success(`${socketMessage.senderName} Send a New Message`);
+      dispatch(updateMessage(socketMessage));
+      socket.current.emit("delivaredMessage", socketMessage);
+      dispatch({
+        type: "UPDATE_FRIEND_MESSAGE",
+        payload: {
+          msgInfo: socketMessage,
+          status: "delivared",
+        },
+      });
+    }
+  }, [socketMessage]);
+
   const inputHandle = (e) => {
     setNewMessage(e.target.value);
 
-    // socket.current.emit("typingMessage", {
-    //   senderId: myInfo.id,
-    //   receiverId: currentfriend._id,
-    //   msg: e.target.value,
-    // });
+    socket.current.emit("typingMessage", {
+      senderId: myInfo.id,
+      receiverId: currentfriend._id,
+      msg: e.target.value,
+    });
   };
 
   const sendMessage = (e) => {
     e.preventDefault();
-    // sendingSPlay();
+    sendingSPlay();
     const data = {
       senderName: myInfo.name,
       senderSurname: myInfo.surname,
@@ -82,27 +150,30 @@ const Chat = () => {
       message: newMessage ? newMessage : "🤓",
     };
 
-    // socket.current.emit("typingMessage", {
-    //   senderId: myInfo.id,
-    //   receiverId: currentfriend._id,
-    //   msg: "",
-    // });
-
-    socket.current.emit("sendMessage", {
+    socket.current.emit("typingMessage", {
       senderId: myInfo.id,
-      senderName: myInfo.name,
-      senderSurname: myInfo.surname,
       receiverId: currentfriend._id,
-      time: new Date(),
-      message: {
-        text: newMessage ? newMessage : "🤓",
-        image: "",
-      },
+      msg: "",
     });
 
     dispatch(messageSend(data));
     setNewMessage("");
   };
+
+  useEffect(() => {
+    if (mesageSendSuccess) {
+      socket.current.emit("sendMessage", message[message.length - 1]);
+      dispatch({
+        type: "UPDATE_FRIEND_MESSAGE",
+        payload: {
+          msgInfo: message[message.length - 1],
+        },
+      });
+      dispatch({
+        type: "MESSAGE_SEND_SUCCESS_CLEAR",
+      });
+    }
+  }, [mesageSendSuccess]);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -110,7 +181,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (friends && friends.length > 0) setCurrentFriend(friends[0]);
+    if (friends && friends.length > 0) setCurrentFriend(friends[0].fndInfo);
   }, [friends]);
 
   useEffect(() => {
@@ -118,35 +189,59 @@ const Chat = () => {
   }, [currentfriend?._id]);
 
   useEffect(() => {
+    if (message.length > 0) {
+      if (
+        message[message.length - 1].senderId !== myInfo.id &&
+        message[message.length - 1].status !== "seen"
+      ) {
+        dispatch({
+          type: "UPDATE",
+          payload: {
+            id: currentfriend._id,
+          },
+        });
+        socket.current.emit("seen", {
+          senderId: currentfriend._id,
+          receiverId: myInfo.id,
+        });
+        dispatch(seenMessage({ _id: message[message.length - 1]._id }));
+      }
+    }
+    dispatch({
+      type: "MESSAGE_GET_SUCCESS_CLEAR",
+    });
+  }, [message_get_success]);
+
+  useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
 
-  const emojiSend = (emu) => {
-    setNewMessage(`${newMessage}` + emu);
-    // socket.current.emit("typingMessage", {
-    //   senderId: myInfo.id,
-    //   reseverId: currentfriend._id,
-    //   msg: emu,
-    // });
+  const emojiSend = (e) => {
+    setNewMessage(`${newMessage}` + e);
+    socket.current.emit("typingMessage", {
+      senderId: myInfo.id,
+      receiverId: currentfriend._id,
+      msg: e,
+    });
   };
 
   const imageSend = (e) => {
-    console.log(e.target.files[0]);
     if (e.target.files.length !== 0) {
-      // sendingSPlay();
+      sendingSPlay();
       const imagename = e.target.files[0].name;
       const newImageName = Date.now() + imagename;
 
-      // socket.current.emit("sendMessage", {
-      //   senderId: myInfo.id,
-      //   senderName: myInfo.userName,
-      //   reseverId: currentfriend._id,
-      //   time: new Date(),
-      //   message: {
-      //     text: "",
-      //     image: newImageName,
-      //   },
-      // });
+      socket.current.emit("sendMessage", {
+        senderId: myInfo.id,
+        senderName: myInfo.name,
+        senderSurname: myInfo.surname,
+        receiverId: currentfriend._id,
+        time: new Date(),
+        message: {
+          text: "",
+          image: newImageName,
+        },
+      });
 
       const formData = new FormData();
 
@@ -161,6 +256,16 @@ const Chat = () => {
 
   return (
     <div className="chat">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            fontSize: "18px",
+          },
+        }}
+      />
+
       <div className="row">
         <div className="col-3">
           <div className="left-side">
@@ -241,14 +346,14 @@ const Chat = () => {
               {friends && friends.length > 0
                 ? friends.map((fd) => (
                     <div
-                      onClick={() => setCurrentFriend(fd)}
+                      onClick={() => setCurrentFriend(fd.fndInfo)}
                       className={
-                        currentfriend._id === fd._id
+                        currentfriend._id === fd.fndInfo._id
                           ? " hover-friend active"
                           : "hover-friend"
                       }
                     >
-                      <Friends friend={fd} />
+                      <Friends myId={myInfo.id} friend={fd} />
                     </div>
                   ))
                 : "No friends"}
@@ -266,6 +371,7 @@ const Chat = () => {
             emojiSend={emojiSend}
             imageSend={imageSend}
             activeUser={activeUser}
+            typingMessage={typingMessage}
           />
         ) : (
           "Please select your friend"

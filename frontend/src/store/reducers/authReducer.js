@@ -52,6 +52,7 @@ export const authReducer = (state = authState, action) => {
   }
   if (type === REGISTER_SUCCESS || type === USER_LOGIN_SUCCESS) {
     const myInfo = tokenDecode(payload.token);
+    console.log("token", myInfo);
     return {
       ...state,
       myInfo: myInfo,
@@ -75,5 +76,6 @@ export const authReducer = (state = authState, action) => {
       error: "",
     };
   }
+
   return state;
 };

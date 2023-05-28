@@ -33,16 +33,38 @@ io.on("connection", (socket) => {
     const user = findFriend(data.receiverId);
 
     if (user !== undefined) {
-      socket.to(user.socketId).emit("getMessage", {
+      socket.to(user.socketId).emit("getMessage", data);
+    }
+  });
+
+  socket.on("messageSeen", (msg) => {
+    const user = findFriend(msg.senderId);
+    if (user !== undefined) {
+      socket.to(user.socketId).emit("msgSeenResponse", msg);
+    }
+  });
+
+  socket.on("delivaredMessage", (msg) => {
+    const user = findFriend(msg.senderId);
+    if (user !== undefined) {
+      socket.to(user.socketId).emit("msgDelivaredResponse", msg);
+    }
+  });
+
+  socket.on("seen", (data) => {
+    const user = findFriend(data.senderId);
+    if (user !== undefined) {
+      socket.to(user.socketId).emit("seenSuccess", data);
+    }
+  });
+
+  socket.on("typingMessage", (data) => {
+    const user = findFriend(data.receiverId);
+    if (user !== undefined) {
+      socket.to(user.socketId).emit("typingMessageGet", {
         senderId: data.senderId,
-        senderName: data.senderName,
-        senderSurname: data.senderSurname,
         receiverId: data.receiverId,
-        createAt: data.time,
-        message: {
-          text: data.message.text,
-          image: data.message.image,
-        },
+        msg: data.msg,
       });
     }
   });

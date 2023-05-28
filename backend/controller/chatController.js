@@ -3,29 +3,67 @@ const messageModel = require("../models/messageModel");
 const formidable = require("formidable");
 const fs = require("fs");
 
+const getLastMessage = async (myId, fdId) => {
+  const msg = await messageModel
+    .findOne({
+      $or: [
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: myId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: fdId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: myId,
+              },
+            },
+          ],
+        },
+      ],
+    })
+    .sort({
+      updatedAt: -1,
+    });
+  return msg;
+};
+
 module.exports.getFriends = async (req, res) => {
   const myId = req.myId;
   let fnd_msg = [];
   try {
-    const friendGet = await User.find({});
-    //   _id: {
-    //     $ne: myId,
-    //   },
-    // });
+    const friendGet = await User.find({
+      _id: {
+        $ne: myId,
+      },
+    });
 
-    // for (let i = 0; i < friendGet.length; i++) {
-    //   let lmsg = await getLastMessage(myId, friendGet[i].id);
-    //   fnd_msg = [
-    //     ...fnd_msg,
-    //     {
-    //       fndInfo: friendGet[i],
-    //       msgInfo: lmsg,
-    //     },
-    //   ];
-    // }
-
-    const filter = friendGet.filter((d) => d.id !== myId);
-    res.status(200).json({ success: true, friends: filter });
+    for (let i = 0; i < friendGet.length; i++) {
+      let lmsg = await getLastMessage(myId, friendGet[i].id);
+      fnd_msg = [
+        ...fnd_msg,
+        {
+          fndInfo: friendGet[i],
+          msgInfo: lmsg,
+        },
+      ];
+    }
+    res.status(200).json({ success: true, friends: fnd_msg });
   } catch (error) {
     res.status(500).json({
       error: {
@@ -67,44 +105,38 @@ module.exports.messageGet = async (req, res) => {
   const fdId = req.params.id;
 
   try {
-    let getAllMessage = await messageModel.find({});
-    //   $or: [
-    //     {
-    //       $and: [
-    //         {
-    //           senderId: {
-    //             $eq: myId,
-    //           },
-    //         },
-    //         {
-    //           receiverId: {
-    //             $eq: fdId,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       $and: [
-    //         {
-    //           senderId: {
-    //             $eq: fdId,
-    //           },
-    //         },
-    //         {
-    //           receiverId: {
-    //             $eq: myId,
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // });
-
-    getAllMessage = getAllMessage.filter(
-      (m) =>
-        (m.senderId === myId && m.receiverId === fdId) ||
-        (m.receiverId === myId && m.senderId === fdId)
-    );
+    let getAllMessage = await messageModel.find({
+      $or: [
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: myId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: fdId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: myId,
+              },
+            },
+          ],
+        },
+      ],
+    });
 
     res.status(200).json({
       success: true,
@@ -162,4 +194,45 @@ module.exports.imageMessageSend = (req, res) => {
       });
     }
   });
+};
+
+module.exports.messageSeen = async (req, res) => {
+  const messageId = req.body._id;
+  await messageModel
+    .findByIdAndUpdate(messageId, {
+      status: "seen",
+    })
+    .then(() => {
+      res.status(200).json({
+        success: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: {
+          errorMessage: "Internal Server Error",
+        },
+      });
+    });
+};
+
+module.exports.delivaredMessage = async (req, res) => {
+  const messageId = req.body._id;
+
+  await messageModel
+    .findByIdAndUpdate(messageId, {
+      status: "delivared",
+    })
+    .then(() => {
+      res.status(200).json({
+        success: true,
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: {
+          errorMessage: "Internal Server Error",
+        },
+      });
+    });
 };

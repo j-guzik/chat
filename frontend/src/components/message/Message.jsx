@@ -3,9 +3,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { FaRegCheckCircle } from "react-icons/fa";
 
-const Message = ({ message, currentfriend, scrollRef }) => {
+const Message = ({ message, currentfriend, scrollRef, typingMessage }) => {
   const { myInfo } = useSelector((state) => state.auth);
-  console.log("message", message);
+
   return (
     <>
       <div className="message-show">
@@ -36,7 +36,6 @@ const Message = ({ message, currentfriend, scrollRef }) => {
                     <div className="message-time">
                       <div className="fd-text">
                         <p className="message-text">
-                          {" "}
                           {m.message.text === "" ? (
                             <img src={`./images/${m.message.image}`} />
                           ) : (
@@ -58,6 +57,24 @@ const Message = ({ message, currentfriend, scrollRef }) => {
           <span></span>
         </div> */}
       </div>
+      {typingMessage &&
+      typingMessage.msg &&
+      typingMessage.senderId === currentfriend._id ? (
+        <div className="typing-message">
+          <div className="fd-message">
+            <div className="image-message-time">
+              <img src={`./images/${currentfriend.image}`} alt="" />
+              <div className="message-time">
+                <div className="fd-text">
+                  <p className="time">Typing Message.... </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
     </>
   );
 };

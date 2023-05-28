@@ -14,6 +14,7 @@ const RightContainer = ({
   emojiSend,
   imageSend,
   activeUser,
+  typingMessage,
 }) => {
   return (
     <div className="col-9">
@@ -64,6 +65,7 @@ const RightContainer = ({
                 message={message}
                 currentfriend={currentfriend}
                 scrollRef={scrollRef}
+                typingMessage={typingMessage}
               />
               <MessageSend
                 inputHandle={inputHandle}

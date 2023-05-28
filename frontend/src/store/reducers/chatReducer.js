@@ -15,8 +15,8 @@ import {
 const chatState = {
   friends: [],
   message: [],
-  // mesageSendSuccess: false,
-  // message_get_success: false,
+  mesageSendSuccess: false,
+  message_get_success: false,
   // themeMood: "",
   // new_user_add: "",
 };
@@ -32,7 +32,7 @@ export const chatReducer = (state = chatState, action) => {
   if (type === MESSAGE_GET_SUCCESS) {
     return {
       ...state,
-      // message_get_success: true,
+      message_get_success: true,
       message: payload.message,
     };
   }
@@ -40,7 +40,7 @@ export const chatReducer = (state = chatState, action) => {
   if (type === MESSAGE_SEND_SUCCESS) {
     return {
       ...state,
-      // mesageSendSuccess: true,
+      mesageSendSuccess: true,
       message: [...state.message, payload.message],
     };
   }
@@ -49,6 +49,75 @@ export const chatReducer = (state = chatState, action) => {
     return {
       ...state,
       message: [...state.message, payload.message],
+    };
+  }
+
+  if (type === UPDATE_FRIEND_MESSAGE) {
+    const index = state.friends.findIndex(
+      (f) =>
+        f.fndInfo._id === payload.msgInfo.receiverId ||
+        f.fndInfo._id === payload.msgInfo.senderId
+    );
+    state.friends[index].msgInfo = payload.msgInfo;
+    state.friends[index].msgInfo.status = payload.status;
+    return state;
+  }
+
+  if (type === MESSAGE_SEND_SUCCESS_CLEAR) {
+    return {
+      ...state,
+      mesageSendSuccess: false,
+    };
+  }
+
+  if (type === SEEN_MESSAGE) {
+    const index = state.friends.findIndex(
+      (f) =>
+        f.fndInfo._id === payload.msgInfo.receiverId ||
+        f.fndInfo._id === payload.msgInfo.senderId
+    );
+    state.friends[index].msgInfo.status = "seen";
+    return {
+      ...state,
+    };
+  }
+
+  if (type === DELIVARED_MESSAGE) {
+    const index = state.friends.findIndex(
+      (f) =>
+        f.fndInfo._id === payload.msgInfo.receiverId ||
+        f.fndInfo._id === payload.msgInfo.senderId
+    );
+    state.friends[index].msgInfo.status = "delivared";
+    return {
+      ...state,
+    };
+  }
+
+  if (type === UPDATE) {
+    const index = state.friends.findIndex((f) => f.fndInfo._id === payload.id);
+    if (state.friends[index].msgInfo) {
+      state.friends[index].msgInfo.status = "seen";
+    }
+    return {
+      ...state,
+    };
+  }
+
+  if (type === MESSAGE_GET_SUCCESS_CLEAR) {
+    return {
+      ...state,
+      message_get_success: false,
+    };
+  }
+
+  if (type === "SEEN_ALL") {
+    const index = state.friends.findIndex(
+      (f) => f.fndInfo._id === payload.receiverId
+    );
+    state.friends[index].msgInfo.status = "seen";
+    return {
+      ...state,
     };
   }
 

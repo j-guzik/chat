@@ -3,6 +3,7 @@ import {
   FRIEND_GET_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
+  SEEN_MESSAGE,
   THEME_GET_SUCCESS,
   THEME_SET_SUCCESS,
 } from "../types/chatType";
@@ -62,5 +63,24 @@ export const imageMessageSend = (data) => async (dispatch) => {
     });
   } catch (error) {
     console.log(error.response.data);
+  }
+};
+
+export const seenMessage = (msg) => async (dispatch) => {
+  try {
+    const response = await axios.post("/api/chat/seen-message", msg);
+
+    console.log(response.data);
+  } catch (error) {
+    console.log(error.response.message);
+  }
+};
+
+export const updateMessage = (msg) => async (dispatch) => {
+  try {
+    const response = await axios.post("/api/chat/delivared-message", msg);
+    console.log(response.data);
+  } catch (error) {
+    console.log(error.response.message);
   }
 };
