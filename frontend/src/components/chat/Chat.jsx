@@ -12,6 +12,7 @@ import {
   seenMessage,
   updateMessage,
 } from "../../store/actions/chatAction";
+import { userLogout } from "../../store/actions/authAction";
 import toast, { Toaster } from "react-hot-toast";
 import { io } from "socket.io-client";
 import useSound from "use-sound";
@@ -35,6 +36,7 @@ const Chat = () => {
   const [activeUser, setActiveUser] = useState([]);
   const [socketMessage, setSocketMessage] = useState("");
   const [typingMessage, setTypingMessage] = useState("");
+  const [hide, setHide] = useState(true);
 
   useEffect(() => {
     socket.current = io("ws://localhost:8000");
@@ -254,6 +256,11 @@ const Chat = () => {
     }
   };
 
+  const logout = () => {
+    dispatch(userLogout());
+    socket.current.emit("logout", myInfo.id);
+  };
+
   return (
     <div className="chat">
       <Toaster
@@ -280,14 +287,14 @@ const Chat = () => {
               </div>
 
               <div className="icons">
-                <div onClick={() => {}} className="icon">
+                <div onClick={() => setHide(!hide)} className="icon">
                   <FaEllipsisH />
                 </div>
                 <div className="icon">
                   <FaEdit />
                 </div>
 
-                {/* <div className={hide ? "theme_logout" : "theme_logout show"}>
+                <div className={hide ? "theme_logout" : "theme_logout show"}>
                   <h3>Dark Mode </h3>
                   <div className="on">
                     <label htmlFor="dark">ON</label>
@@ -300,7 +307,7 @@ const Chat = () => {
                     />
                   </div>
 
-                  <div className="of">
+                  <div className="off">
                     <label htmlFor="white">OFF</label>
                     <input
                       // onChange={(e) => dispatch(themeSet(e.target.value))}
@@ -311,10 +318,10 @@ const Chat = () => {
                     />
                   </div>
 
-                  <div className="logout">
+                  <div onClick={logout} className="logout">
                     <FaSignOutAlt /> Logout
                   </div>
-                </div> */}
+                </div>
               </div>
             </div>
 
@@ -353,7 +360,11 @@ const Chat = () => {
                           : "hover-friend"
                       }
                     >
-                      <Friends myId={myInfo.id} friend={fd} />
+                      <Friends
+                        activeUser={activeUser}
+                        myId={myInfo.id}
+                        friend={fd}
+                      />
                     </div>
                   ))
                 : "No friends"}
