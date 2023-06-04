@@ -11,6 +11,8 @@ import {
   imageMessageSend,
   seenMessage,
   updateMessage,
+  getTheme,
+  themeSet,
 } from "../../store/actions/chatAction";
 import { userLogout } from "../../store/actions/authAction";
 import toast, { Toaster } from "react-hot-toast";
@@ -26,8 +28,14 @@ const Chat = () => {
   const scrollRef = useRef();
   const socket = useRef();
 
-  const { friends, message, mesageSendSuccess, message_get_success } =
-    useSelector((state) => state.chat);
+  const {
+    friends,
+    message,
+    mesageSendSuccess,
+    message_get_success,
+    themeMode,
+    new_user_add,
+  } = useSelector((state) => state.chat);
   const { myInfo } = useSelector((state) => state.auth);
 
   const [currentfriend, setCurrentFriend] = useState("");
@@ -45,7 +53,6 @@ const Chat = () => {
     });
 
     socket.current.on("typingMessageGet", (data) => {
-      console.log("data", data);
       setTypingMessage(data);
     });
 
@@ -109,6 +116,15 @@ const Chat = () => {
     socket.current.on("getUser", (users) => {
       const filterUser = users.filter((u) => u.userId !== myInfo.id);
       setActiveUser(filterUser);
+    });
+
+    socket.current.on("new_user_add", (data) => {
+      dispatch({
+        type: "NEW_USER_ADD",
+        payload: {
+          new_user_add: data,
+        },
+      });
     });
   }, []);
 
@@ -180,7 +196,8 @@ const Chat = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFriends());
-  }, []);
+    dispatch({ type: "NEW_USER_ADD_CLEAR" });
+  }, [new_user_add]);
 
   useEffect(() => {
     if (friends && friends.length > 0) setCurrentFriend(friends[0].fndInfo);
@@ -261,8 +278,29 @@ const Chat = () => {
     socket.current.emit("logout", myInfo.id);
   };
 
+  useEffect(() => {
+    dispatch(getTheme());
+  }, []);
+
+  const search = (e) => {
+    const getFriendClass = document.getElementsByClassName("hover-friend");
+    const friendNameClass = document.getElementsByClassName("Fd_name");
+    for (
+      var i = 0;
+      i < getFriendClass.length, i < friendNameClass.length;
+      i++
+    ) {
+      let text = friendNameClass[i].innerText.toLowerCase();
+      if (text.indexOf(e.target.value.toLowerCase()) > -1) {
+        getFriendClass[i].style.display = "";
+      } else {
+        getFriendClass[i].style.display = "none";
+      }
+    }
+  };
+
   return (
-    <div className="chat">
+    <div className={themeMode === "dark" ? "chat theme" : "chat"}>
       <Toaster
         position="top-center"
         reverseOrder={false}
@@ -299,7 +337,7 @@ const Chat = () => {
                   <div className="on">
                     <label htmlFor="dark">ON</label>
                     <input
-                      // onChange={(e) => dispatch(themeSet(e.target.value))}
+                      onChange={(e) => dispatch(themeSet(e.target.value))}
                       type="radio"
                       value="dark"
                       name="theme"
@@ -310,7 +348,7 @@ const Chat = () => {
                   <div className="off">
                     <label htmlFor="white">OFF</label>
                     <input
-                      // onChange={(e) => dispatch(themeSet(e.target.value))}
+                      onChange={(e) => dispatch(themeSet(e.target.value))}
                       type="radio"
                       value="white"
                       name="theme"
@@ -331,6 +369,7 @@ const Chat = () => {
                   <FaSistrix />
                 </button>
                 <input
+                  onChange={search}
                   type="text"
                   placeholder="Search"
                   className="form-control"

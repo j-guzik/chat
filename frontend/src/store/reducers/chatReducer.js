@@ -10,6 +10,11 @@ import {
   UPDATE,
   MESSAGE_GET_SUCCESS_CLEAR,
   SEEN_ALL,
+  THEME_GET_SUCCESS,
+  THEME_SET_SUCCESS,
+  LOGOUT_SUCCESS,
+  NEW_USER_ADD,
+  NEW_USER_ADD_CLEAR,
 } from "../types/chatType";
 
 const chatState = {
@@ -17,12 +22,20 @@ const chatState = {
   message: [],
   mesageSendSuccess: false,
   message_get_success: false,
-  // themeMood: "",
-  // new_user_add: "",
+  themeMode: "",
+  new_user_add: "",
 };
 
 export const chatReducer = (state = chatState, action) => {
   const { type, payload } = action;
+
+  if (type === THEME_GET_SUCCESS || type === THEME_SET_SUCCESS) {
+    return {
+      ...state,
+      themeMode: payload.theme,
+    };
+  }
+
   if (type === FRIEND_GET_SUCCESS) {
     return {
       ...state,
@@ -111,13 +124,37 @@ export const chatReducer = (state = chatState, action) => {
     };
   }
 
-  if (type === "SEEN_ALL") {
+  if (type === SEEN_ALL) {
     const index = state.friends.findIndex(
       (f) => f.fndInfo._id === payload.receiverId
     );
     state.friends[index].msgInfo.status = "seen";
     return {
       ...state,
+    };
+  }
+
+  if (type === LOGOUT_SUCCESS) {
+    return {
+      ...state,
+      friends: [],
+      message: [],
+      mesageSendSuccess: false,
+      message_get_success: false,
+    };
+  }
+
+  if (type === NEW_USER_ADD) {
+    return {
+      ...state,
+      new_user_add: payload.new_user_add,
+    };
+  }
+
+  if (type === NEW_USER_ADD_CLEAR) {
+    return {
+      ...state,
+      new_user_add: "",
     };
   }
 
