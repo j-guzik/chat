@@ -1,6 +1,9 @@
 .active-friends {
+  display: flex;
+  margin: 0 10px;
   .active-friend {
     overflow: hidden;
+    height: 55px;
     .image-active-icon {
       overflow-x: scroll;
       display: flex;

@@ -7,7 +7,6 @@ import ProtectRoute from "./components/ProtectRoute";
 function App() {
   return (
     <div className="App">
-      {" "}
       <BrowserRouter>
         <Routes>
           <Route path="/chat/login" element={<Login />} />

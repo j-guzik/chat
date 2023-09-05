@@ -92,7 +92,7 @@ module.exports.userRegister = (req, res) => {
                 expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
               };
               res.status(201).cookie("authToken", token, options).json({
-                successMessage: "Your Register Successful",
+                successMessage: "Register Successful",
                 token,
               });
             } else {
@@ -165,20 +165,20 @@ module.exports.userLogin = async (req, res) => {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           };
           res.status(200).cookie("authToken", token, options).json({
-            successMessage: "Your Login Successful",
+            successMessage: "Login Successful",
             token,
           });
         } else {
           res.status(400).json({
             error: {
-              errorMessage: ["Your password not valid"],
+              errorMessage: ["password not valid"],
             },
           });
         }
       } else {
         res.status(400).json({
           error: {
-            errorMessage: ["Your email not found"],
+            errorMessage: ["email not found"],
           },
         });
       }
