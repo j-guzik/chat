@@ -38,7 +38,7 @@ const Friends = (props) => {
 
           <div className="msg-time">
             {msgInfo && msgInfo.senderId === myId ? (
-              <span>You </span>
+              <span>You: </span>
             ) : (
               <span
                 className={
@@ -49,7 +49,7 @@ const Friends = (props) => {
                     : ""
                 }
               >
-                {fndInfo.name + " "}
+                <span>{msgInfo && fndInfo.name + " "}</span>
               </span>
             )}
 
@@ -63,18 +63,21 @@ const Friends = (props) => {
                     : ""
                 }
               >
-                {msgInfo.message.text.slice(0, 10)}
+                {msgInfo.message.text}
               </span>
             ) : msgInfo && msgInfo.message.image ? (
               <span>Send image </span>
             ) : (
-              <span>Linked to you </span>
+              <span>
+                {"Linked to you " +
+                  moment(fndInfo.createdAt).startOf("mini").fromNow()}
+              </span>
             )}
-            <span>
+            <div className="time">
               {msgInfo
                 ? moment(msgInfo.createdAt).startOf("mini").fromNow()
-                : moment(fndInfo.createdAt).startOf("mini").fromNow()}
-            </span>
+                : ""}
+            </div>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { FaPhoneAlt, FaVideo, FaRocketchat } from "react-icons/fa";
+import { FaPhoneAlt, FaVideo, FaExpandAlt } from "react-icons/fa";
 import Message from "../message/Message";
 import MessageSend from "../messageSend/MessageSend";
 import FriendInfo from "../friendInfo/FriendInfo";
@@ -56,7 +56,7 @@ const RightContainer = ({
 
                   <div className="icon">
                     <label htmlFor="dot">
-                      <FaRocketchat />
+                      <FaExpandAlt />
                     </label>
                   </div>
                 </div>

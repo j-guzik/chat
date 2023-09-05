@@ -107,13 +107,12 @@ const Register = () => {
 
       <div className="card">
         <div className="card-header">
-          <h3>Register</h3>
+          <h3>Sign up</h3>
         </div>
 
         <div className="card-body">
           <form onSubmit={register}>
             <div className="form-group">
-              <label htmlFor="name">Name</label>
               <input
                 type="text"
                 name="name"
@@ -126,7 +125,6 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="surname">Surname</label>
               <input
                 type="text"
                 name="surname"
@@ -139,7 +137,6 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 name="email"
@@ -152,7 +149,6 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
@@ -165,7 +161,6 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -180,7 +175,11 @@ const Register = () => {
             <div className="form-group">
               <div className="file-image">
                 <div className="image">
-                  {loadImage ? <img src={loadImage} alt="profile" /> : ""}
+                  {loadImage ? (
+                    <img src={loadImage} alt="profile" />
+                  ) : (
+                    <img src="../../../images/profile.png" alt="profile" />
+                  )}
                 </div>
                 <div className="file">
                   <label htmlFor="image">Select Image</label>
@@ -201,7 +200,7 @@ const Register = () => {
 
             <div className="form-group">
               <span>
-                <Link to="/chat/login"> Login Your Account </Link>
+                <Link to="/chat/login">I already have an account</Link>
               </span>
             </div>
           </form>
