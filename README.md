@@ -10,7 +10,7 @@
 ## Overview
 This application is designed to offer a dynamic and interactive online communication experience. It's built using MERN Stack technologies, enabling real-time conversations and supporting the exchange of emojis and images.
 
-## Tech stack and architecture
+## Tech Stack and Architecture
 The project leverages the following technologies:
 - React js 
 - Node
@@ -22,15 +22,8 @@ The project leverages the following technologies:
 ## Getting Started
 
 - Clone the repository
-
 ```
 $ git clone https://github.com/j-guzik/chat.git
-$ cd chat
-$ yarn
-$ cd frontend
-$ yarn
-$ cd ../
-$ yarn dev
 ```
 
 - Database setup
@@ -39,10 +32,19 @@ Run the following in your local environment:
 ```
 $ mongod
 ```
-
 MongoDB Compass is recommended for data management.
 
-Socket.io setup
+- Setup
+```
+$ cd chat
+$ yarn
+$ cd frontend
+$ yarn
+$ cd ../
+$ yarn dev
+```
+
+- Socket.io setup
 
 ```
 $ cd chat/socket
