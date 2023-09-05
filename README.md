@@ -26,7 +26,10 @@ The project leverages the following technologies:
 ```
 $ git clone https://github.com/j-guzik/chat.git
 $ cd chat
-$ yarn install
+$ yarn
+$ cd frontend
+$ yarn
+$ cd ../
 $ yarn dev
 ```
 
@@ -43,6 +46,7 @@ Socket.io setup
 
 ```
 $ cd chat/socket
+$ yarn
 $ yarn socket
 ```
 
