@@ -4,12 +4,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px;
+  margin-bottom: 8px;
   .file {
     display: flex;
     padding: 8px;
     font-size: 20px;
     cursor: pointer;
-    color: var(--icon-color);
+    color: var(--send-icon-color);
     label {
       display: flex;
       align-items: center;
@@ -19,6 +20,10 @@
     }
     #pic {
       display: none;
+    }
+    &.attachment {
+      padding-right: 4px;
+      padding-left: 12px;
     }
     .add-image,
     .add-attachment,
@@ -58,20 +63,25 @@
   }
   .message-type {
     display: flex;
+    flex-grow: 1;
     width: 70%;
     height: 40px;
-    background-color: #dfdfdf;
     border-radius: 50px;
     border: none;
     align-items: center;
+    background-color: var(--search-bg);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    margin-left: 9px;
+    margin-right: 4px;
     .form-control {
       width: 100%;
       border-bottom-left-radius: 50px;
       border-top-left-radius: 50px;
       background-color: transparent;
       border: none;
+      color: var(--text-input);
       &::placeholder {
-        color: var(--text-color);
+        color: #c9c6c6;
       }
     }
     label {

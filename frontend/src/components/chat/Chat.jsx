@@ -333,9 +333,9 @@ const Chat = () => {
                 </div>
 
                 <div className={hide ? "theme_logout" : "theme_logout show"}>
-                  <h3>Dark Mode </h3>
+                  <h3>Dark mode </h3>
                   <div className="on">
-                    <label htmlFor="dark">ON</label>
+                    <label htmlFor="dark">On</label>
                     <input
                       onChange={(e) => dispatch(themeSet(e.target.value))}
                       type="radio"
@@ -346,7 +346,7 @@ const Chat = () => {
                   </div>
 
                   <div className="off">
-                    <label htmlFor="white">OFF</label>
+                    <label htmlFor="white">Off</label>
                     <input
                       onChange={(e) => dispatch(themeSet(e.target.value))}
                       type="radio"
@@ -424,7 +424,7 @@ const Chat = () => {
             typingMessage={typingMessage}
           />
         ) : (
-          "Please select your friend"
+          ""
         )}
       </div>
     </div>

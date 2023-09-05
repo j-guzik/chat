@@ -15,13 +15,13 @@ const Message = ({ message, currentfriend, scrollRef, typingMessage }) => {
               <div ref={scrollRef} className="my-message">
                 <div className="image-message">
                   <div className="my-text">
-                    <p className="message-text">
-                      {m.message.text === "" ? (
+                    {m.message.text === "" ? (
+                      <p className="message-text message-image friend">
                         <img src={`./images/${m.message.image}`} />
-                      ) : (
-                        m.message.text
-                      )}
-                    </p>
+                      </p>
+                    ) : (
+                      <p className="message-text">{m.message.text}</p>
+                    )}
 
                     {index === message.length - 1 &&
                     m.senderId === myInfo.id ? (
@@ -55,13 +55,13 @@ const Message = ({ message, currentfriend, scrollRef, typingMessage }) => {
                   <img src={`./images/${currentfriend.image}`} alt="profile" />
                   <div className="message-time">
                     <div className="fd-text">
-                      <p className="message-text">
-                        {m.message.text === "" ? (
+                      {m.message.text === "" ? (
+                        <p className="message-text message-image friend">
                           <img src={`./images/${m.message.image}`} />
-                        ) : (
-                          m.message.text
-                        )}
-                      </p>
+                        </p>
+                      ) : (
+                        <p className="message-text friend">{m.message.text}</p>
+                      )}
                     </div>
                     <div className="time">
                       {moment(m.createdAt).startOf("mini").fromNow()}
@@ -88,7 +88,7 @@ const Message = ({ message, currentfriend, scrollRef, typingMessage }) => {
               <img src={`./images/${currentfriend.image}`} alt="" />
               <div className="message-time">
                 <div className="fd-text">
-                  <p className="time">Typing Message.... </p>
+                  <p className="typing">Typing message.... </p>
                 </div>
               </div>
             </div>

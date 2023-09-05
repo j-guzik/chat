@@ -47,13 +47,12 @@ const Login = () => {
     <div className="login">
       <div className="card">
         <div className="card-header">
-          <h3>Login</h3>
+          <h3>SIGN IN</h3>
         </div>
 
         <div className="card-body">
           <form onSubmit={login}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 name="email"
@@ -66,7 +65,6 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
@@ -78,13 +76,13 @@ const Login = () => {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group btn-group">
               <input type="submit" value="Login" className="btn" />
             </div>
 
             <div className="form-group">
               <span>
-                <Link to="/chat/register"> Don't have account? </Link>
+                <Link to="/chat/register">I don't have an account</Link>
               </span>
             </div>
           </form>

@@ -76,6 +76,12 @@
       .message-text {
         text-align: start;
         border-radius: 10px;
+        &.friend {
+          background-color: var(--fd-message-color);
+        }
+        &.message-image {
+          background-color: transparent;
+        }
         img {
           width: 220px;
           height: 270px;
@@ -101,9 +107,12 @@
   .message-text {
     padding: 8px;
     color: #fff;
-    background-color: #017aff;
+    background-color: var(--primary);
     font-size: 14px;
     font-weight: 400;
+    &.message-image {
+      background-color: transparent;
+    }
   }
   .time {
     padding: 5px 0px;
@@ -113,4 +122,12 @@
 }
 .typing-message {
   padding: 0px 10px;
+  margin-bottom: 5px;
+}
+
+.typing {
+  margin-top: 5px;
+  padding: 5px 0px;
+  color: #727272d9;
+  font-size: 12px;
 }

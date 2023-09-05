@@ -22,7 +22,7 @@ const chatState = {
   message: [],
   mesageSendSuccess: false,
   message_get_success: false,
-  themeMode: "",
+  themeMode: "white",
   new_user_add: "",
 };
 

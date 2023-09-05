@@ -1,24 +1,26 @@
 .friends {
   display: flex;
   flex-direction: column;
-  background-color: var(--border-color);
   height: 100%;
   overflow-y: auto;
   &::-webkit-scrollbar {
     display: none;
   }
   .hover-friend.active {
-    background-color: var(--search-bg);
+    background-color: var(--sec-card-color);
   }
   .hover-friend {
+    margin: 7px 15px;
+    border-radius: 8px;
     cursor: pointer;
     &:hover {
-      background-color: #017aff;
+      background-color: var(--sec-card-color);
     }
     .friend {
       display: flex;
-      width: 100%;
-      padding: 7px 15px;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      border-radius: 8px;
+      padding: 10px;
       .friend-image {
         .image {
           margin-right: 8px;
@@ -59,6 +61,10 @@
             font-weight: 300;
           }
           .msg-time {
+            .time {
+              color: rgba(114, 114, 114, 0.8509803922);
+              font-size: 12px;
+            }
             span.unseen_message {
               font-weight: 700 !important;
             }
